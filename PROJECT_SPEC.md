@@ -4,7 +4,7 @@
 
 ## Assumptions and unresolved decisions
 
-- FLOWCOAT is the approved written name; no usable logo file has yet been added. The text wordmark and orange/charcoal palette are provisional until the supplied logo is inspected.
+- FLOWCOAT is the approved written name. The supplied logo establishes a red, charcoal and white palette; the website uses a responsive vector interpretation of its FC circle mark and “Industrial Finishes.” brand line.
 - Sydney is public; factory suburb, address, phone, email, hours, ABN and service radius remain TBD and are not fabricated.
 - The current rented production arrangement is operational. The purpose-designed facility and automation are planned, not current.
 - Supabase, Resend, analytics, CRM and CMS choices remain unconfigured. The quote form saves locally and clearly does not submit until secure infrastructure exists.
@@ -13,7 +13,7 @@
 
 ## Sitemap and journeys
 
-Home; Services; Capabilities; Projects; Process; About; Contact; Request a Quote; FAQ; Privacy; Terms; 404. Legacy `/work` and `/approach` routes redirect to Projects and Process.
+Home; Services; Projects; Process; Contact; Request a Quote; Privacy; Terms; 404. Legacy and consolidated routes redirect to the nearest useful core page.
 
 Primary journey: understand category/location → assess services and process → view real work → prepare job information → request a quote. Secondary journeys support production customers comparing capability, and one-off customers checking suitability.
 

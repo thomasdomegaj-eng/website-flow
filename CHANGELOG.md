@@ -2,6 +2,12 @@
 
 All notable changes are documented here.
 
+## 2.1.0 — 2026-08-06
+
+- Simplified the primary navigation and homepage content hierarchy.
+- Added the FLOWCOAT circle mark and matching red, charcoal and white brand palette.
+- Introduced “Industrial Finishes.” as the primary brand line across the hero, logo lockup, metadata and footer.
+
 ## 1.0.0 — 2026-08-06
 
 - Established the Fieldwork draft brand and responsive design-token system.

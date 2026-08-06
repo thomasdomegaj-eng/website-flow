@@ -1,4 +1,0 @@
-import Link from "next/link";
-export function PageShell({ eyebrow, title, intro, children }: { eyebrow: string; title: string; intro: string; children: React.ReactNode }) {
- return <main id="main"><header className="wrap py-16 sm:py-24"><p className="eyebrow text-[var(--rust)]">{eyebrow}</p><h1 className="mt-5 max-w-5xl text-5xl font-bold tracking-[-.06em] sm:text-7xl">{title}</h1><p className="mt-8 max-w-2xl text-xl leading-relaxed opacity-75">{intro}</p></header>{children}<section className="bg-[var(--lime)] py-14"><div className="wrap flex flex-wrap items-center justify-between gap-8"><h2 className="max-w-2xl text-3xl font-bold tracking-tight sm:text-5xl">Bring us the problem, not a polished brief.</h2><Link href="/contact" className="button">Start a project <span aria-hidden className="arrow">↗</span></Link></div></section></main>;
-}

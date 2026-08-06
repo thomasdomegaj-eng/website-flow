@@ -4,11 +4,11 @@
 
 :root {
   /* Provisional until the supplied logo is added to public/assets/brand. */
-  --brand: #ff5a1f;
-  --brand-dark: #d93d0b;
-  --ink: #111311;
-  --steel: #323733;
-  --paper: #f5f3ec;
+  --brand: #f51f2b;
+  --brand-dark: #c8101b;
+  --ink: #272324;
+  --steel: #3d393a;
+  --paper: #f7f7f5;
   --surface: #ffffff;
   --line: #c8cbc5;
   --muted: #626962;
