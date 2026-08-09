@@ -1,0 +1,3 @@
+import type { Metadata } from "next";import { PageHero } from "@/components/page-hero";import { AssetGallery } from "@/components/asset-gallery";
+export const metadata:Metadata={title:"Projects",description:"Approved Flowcoat powder-coating project photography.",alternates:{canonical:"/projects"}};
+export default function Projects(){return <main id="main"><PageHero label="Projects" title="Real work. Clearly documented." intro="This gallery is ready for approved project photographs. Customer names, proprietary products and identifying details will not be published without permission."/><section className="wrap py-16"><AssetGallery folder="projects"/></section></main>}

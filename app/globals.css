@@ -1,0 +1,44 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Brand colours matched to the supplied FLOWCOAT logo. */
+  --brand: #f51f2b;
+  --brand-dark: #c8101b;
+  --ink: #272324;
+  --steel: #3d393a;
+  --paper: #f7f7f5;
+  --surface: #ffffff;
+  --line: #c8cbc5;
+  --muted: #626962;
+  --success: #18794e;
+  --warning: #8a5300;
+  --error: #b42318;
+  --info: #175cd3;
+  --focus: #005fcc;
+  --radius: .35rem;
+  --ease: 180ms cubic-bezier(.2,.7,.2,1);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: Arial, Helvetica, sans-serif; }
+::selection { background: var(--brand); color: white; }
+a, button, input, select, textarea { -webkit-tap-highlight-color: transparent; }
+:where(a, button, input, select, textarea, summary):focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.wrap { width: min(100% - 2rem, 88rem); margin-inline: auto; }
+.eyebrow { font-size: .72rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+.display { font-size: clamp(3.25rem, 8.6vw, 8rem); line-height: .88; letter-spacing: -.065em; font-weight: 900; }
+.button { display: inline-flex; min-height: 3.25rem; align-items: center; justify-content: center; gap: .7rem; border: 2px solid var(--ink); border-radius: var(--radius); padding: .75rem 1.15rem; background: var(--ink); color: white; font-weight: 800; transition: transform var(--ease), background var(--ease), color var(--ease); }
+.button:hover { transform: translateY(-2px); background: var(--brand); border-color: var(--brand); }
+.button-brand { background: var(--brand); border-color: var(--brand); color: var(--ink); }
+.button-brand:hover { background: white; border-color: white; }
+.button-outline { background: transparent; color: inherit; }
+.button-outline:hover { color: white; }
+.technical-grid { background-image: linear-gradient(rgba(255,255,255,.065) 1px, transparent 1px), linear-gradient(90deg,rgba(255,255,255,.065) 1px, transparent 1px); background-size: 3rem 3rem; }
+.field { width: 100%; min-height: 3.15rem; border: 1px solid var(--line); border-radius: var(--radius); background: white; padding: .75rem; color: var(--ink); }
+.field:focus { border-color: var(--focus); }
+.field-label { display: block; margin-bottom: .4rem; font-size: .82rem; font-weight: 800; }
+details > summary { cursor: pointer; list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }

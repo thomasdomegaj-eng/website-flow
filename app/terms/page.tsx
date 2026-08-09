@@ -1,0 +1,3 @@
+import type { Metadata } from "next";import { PageHero } from "@/components/page-hero";
+export const metadata:Metadata={title:"Website Terms",alternates:{canonical:"/terms"}};
+export default function Terms(){return <main id="main"><PageHero label="Website terms" title="Legal review required." intro="Final website, quotation, upload, storage, warranty and trading terms must be reviewed by an Australian lawyer before publication."/><section className="wrap max-w-3xl py-14 text-lg leading-relaxed text-[var(--muted)]"><p>This draft site provides general information only. A quote request is not an accepted order. Final scope, pricing and suitability require review and confirmation by Flowcoat.</p></section></main>}
