@@ -3,10 +3,18 @@ import Link from "next/link";
 export function BrandMark({ className = "h-12 w-12" }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 100 100" role="img" aria-label="Flowcoat">
-      <circle cx="50" cy="50" r="48" fill="var(--ink)" />
       <path d="M50 2a48 48 0 0 0 0 96Z" fill="var(--brand)" />
-      <path d="M27 20h40v15H43v11h19v15H43v19H27Z" fill="white" />
-      <path d="M72 45c-19 0-30 11-30 29 0 16 11 25 27 25 7 0 13-2 18-5V76c-4 4-8 6-13 6-8 0-13-4-13-10 0-7 5-11 13-11 5 0 9 2 13 5V49c-4-3-9-4-15-4Z" fill="white" />
+      <path d="M50 2a48 48 0 0 1 0 96Z" fill="var(--ink)" />
+      <g>
+        <path d="M29 18h40v15H45v11h19v14H45v5H29Z" fill="white" />
+        <path
+          d="M84 57c-4-4-9-6-15-6-13 0-22 9-22 22s9 22 22 22c6 0 11-2 15-6"
+          fill="none"
+          stroke="white"
+          strokeLinecap="butt"
+          strokeWidth="16"
+        />
+      </g>
     </svg>
   );
 }

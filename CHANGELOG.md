@@ -2,6 +2,10 @@
 
 All notable changes are documented here.
 
+## 2.1.1 — 2026-08-07
+
+- Refined the FC circle mark to centre the split field and separate the F and C forms for clearer reproduction at navigation sizes.
+
 ## 2.1.0 — 2026-08-06
 
 - Simplified the primary navigation and homepage content hierarchy.

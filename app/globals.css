@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  /* Provisional until the supplied logo is added to public/assets/brand. */
+  /* Brand colours matched to the supplied FLOWCOAT logo. */
   --brand: #f51f2b;
   --brand-dark: #c8101b;
   --ink: #272324;
