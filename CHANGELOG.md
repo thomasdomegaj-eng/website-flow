@@ -2,6 +2,13 @@
 
 All notable changes are documented here.
 
+## 2.2.0 — 2026-09-14
+
+- Added a development-only FLOWCOAT Media Studio at `/media-studio` for uploading and deleting local project photography.
+- Local test media persists outside downloaded website ZIPs in `~/.flowcoat-media/projects` by default.
+- Project galleries now refresh live through same-browser notifications plus a two-second fallback poll, without rebuilding Next.js.
+- Bundled `public/assets/projects` photography and local development uploads are shown together.
+
 ## 2.1.1 — 2026-08-07
 
 - Refined the FC circle mark to centre the split field and separate the F and C forms for clearer reproduction at navigation sizes.
