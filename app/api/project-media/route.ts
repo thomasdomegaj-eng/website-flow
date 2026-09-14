@@ -16,7 +16,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  if (!localMediaStudioEnabled()) return NextResponse.json({ error: "Not found." }, { status: 404 });
+  if (!localMediaStudioEnabled()) return NextResponse.json({ error: "Media Studio is unavailable." }, { status: 404 });
 
   const formData = await request.formData();
   const files = formData.getAll("files").filter((value): value is File => typeof value !== "string");
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
 }
 
 export async function DELETE(request: Request) {
-  if (!localMediaStudioEnabled()) return NextResponse.json({ error: "Not found." }, { status: 404 });
+  if (!localMediaStudioEnabled()) return NextResponse.json({ error: "Media Studio is unavailable." }, { status: 404 });
 
   let name = "";
   try {
