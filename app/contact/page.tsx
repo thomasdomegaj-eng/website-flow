@@ -15,7 +15,7 @@ export default function Contact() {
       <PageHero
         label="Contact"
         title="Start with the job details."
-        intro="Call Flowcoat directly or send the job details needed for a proper review and quotation."
+        intro="Call or email Flowcoat directly, or send the job details needed for a proper review and quotation."
       />
       <section className="wrap grid gap-8 py-16 md:grid-cols-2">
         <article className="bg-[var(--brand)] p-8">
@@ -33,12 +33,12 @@ export default function Contact() {
               <dd className="mt-1 text-xl font-bold"><a href={`tel:${business.phoneHref}`} className="underline decoration-[var(--brand)] decoration-2 underline-offset-4">{business.phoneDisplay}</a></dd>
             </div>
             <div>
-              <dt className="text-xs font-bold uppercase tracking-[.18em] text-[var(--muted)]">Factory</dt>
-              <dd className="mt-1 text-lg font-semibold"><address className="not-italic">{business.addressDisplay}</address></dd>
+              <dt className="text-xs font-bold uppercase tracking-[.18em] text-[var(--muted)]">Email</dt>
+              <dd className="mt-1 text-lg font-semibold"><a href={`mailto:${business.email}`} className="underline decoration-[var(--brand)] decoration-2 underline-offset-4">{business.email}</a></dd>
             </div>
             <div>
-              <dt className="text-xs font-bold uppercase tracking-[.18em] text-[var(--muted)]">Email</dt>
-              <dd className="mt-1 text-[var(--muted)]">Public email address to be confirmed.</dd>
+              <dt className="text-xs font-bold uppercase tracking-[.18em] text-[var(--muted)]">Factory</dt>
+              <dd className="mt-1 text-lg font-semibold"><address className="not-italic">{business.addressDisplay}</address></dd>
             </div>
           </dl>
         </article>
