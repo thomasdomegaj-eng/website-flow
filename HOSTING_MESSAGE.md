@@ -1,41 +1,44 @@
-# Ready-to-send message for the website hosting team
+# Ready-to-send reply for the website hosting team
 
-**Subject: FLOWCOAT website – private server launch and test setup**
+**Subject: Re: FLOWCOAT website private test setup**
 
 Hi,
 
-We are ready to do a private test deployment of the FLOWCOAT website on your servers before making it public.
+Thanks for letting me know — no problem.
 
-Source:
+I've updated the website repo for the Windows Plesk setup and added a root-level **`app.js`** startup file specifically for Plesk/iisnode.
+
+The repo is still:
 `https://github.com/thomasdomegaj-eng/website-flow`
 
-Please deploy the **main** branch using **Node.js 20 LTS**.
+Please use the latest **main** branch.
 
-Full technical handoff:
-`https://github.com/thomasdomegaj-eng/website-flow/blob/main/HOSTING_HANDOFF.md`
+For the Node.js app in Windows Plesk, could you please try:
 
-Basic deployment:
+- Node.js: **20 LTS**
+- Application Mode: **Production**
+- Application Root: the folder containing `package.json` and `app.js`
+- Document Root: the same folder as the Application Root
+- Application Startup File: **`app.js`**
 
-```bash
+Then run:
+
+```text
 npm install
 npm run verify
-npm start
 ```
 
-Please configure the server-side environment values in `HOSTING_HANDOFF.md`. The site now needs the Media Studio credentials plus the SMTP settings for `noreply@flowcoat.com.au`. Please use the SMTP password Shehpar already supplied to me in the email thread. Keep all passwords only in the hosting environment/secret manager — not in GitHub or public configuration files.
+and restart the Node.js application in Plesk.
 
-The Request a Quote form is wired so successful submissions are sent to `sale@flowcoat.com.au` from `noreply@flowcoat.com.au`, with the customer's email used as Reply-To. `/media-studio` is password protected and manages project photos/client logos using persistent writable storage.
+I've also updated the hosting handoff with Windows-Plesk-specific instructions:
+`https://github.com/thomasdomegaj-eng/website-flow/blob/main/HOSTING_HANDOFF.md`
 
-For this first deployment, could you please keep the **entire website private while we test it**, preferably using temporary site-wide HTTP Basic Auth or the equivalent hosting-panel password protection. Please also prevent indexing on the private test deployment. Once it is running, send me the test URL and temporary access details securely.
+For the private server values/secrets, because this is Windows Plesk, you can either set them at the IIS/Node process level or create a server-only **`.env.production.local`** file in the app root using the values in the handoff. That file is ignored by Git and shouldn't be committed.
 
-Please work through the verification checklist in `HOSTING_HANDOFF.md`, especially:
-- `npm run verify`
-- `/api/health`
-- Media Studio login/upload/persistence
-- one real quote submission through to `sale@flowcoat.com.au`
-- Reply-To going back to the customer's address
-- HTTPS and redirects
+Please use the SMTP password Shehpar already sent me for this private test, and keep it only on the server. The Media Studio password can also be set there.
 
-If you can also tell me the hosting stack you are using (cPanel, Plesk, VPS/Nginx, Docker, etc.), that will help if any platform-specific configuration is needed.
+Once it starts, could you please test `/api/health`, the Media Studio login/upload, and one quote submission through to `sale@flowcoat.com.au`.
+
+If `app.js` still doesn't start properly under iisnode, just send me the exact Plesk/iisnode error or log output and I'll adjust it from there.
 
 Thanks.
