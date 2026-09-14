@@ -41,9 +41,7 @@ export function QuoteForm() {
   function update(name: keyof QuoteData, value: string | boolean) {
     const next = { ...data, [name]: value };
     setData(next);
-
-    // Never store the anti-spam honeypot.
-    const { website: _website, ...draft } = next;
+    const draft = Object.fromEntries(Object.entries(next).filter(([key]) => key !== "website"));
     localStorage.setItem("flowcoat-quote-draft", JSON.stringify(draft));
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1200);
@@ -62,7 +60,7 @@ export function QuoteForm() {
       .filter(([value]) => !value)
       .map(([, label]) => `${label} is required.`);
 
-    if (step === 1 && data.email && !/^[^\s@]+@[^\s@]+.[^\s@]+$/.test(data.email.trim())) {
+    if (step === 1 && data.email && !/^[^\s@]+@[^\s@]+[.][^\s@]+$/.test(data.email.trim())) {
       missing.push("Enter a valid email address.");
     }
 
