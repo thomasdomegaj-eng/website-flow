@@ -1,3 +1,28 @@
 import Link from "next/link";
 import { BrandLogo } from "@/components/brand-logo";
-export function SiteFooter(){return <footer className="bg-[var(--ink)] py-12 text-white"><div className="wrap grid gap-12 md:grid-cols-[1.4fr_1fr]"><div><BrandLogo inverted/><p className="mt-5 max-w-md text-white/65">Commercial powder coating for metal parts, fabrications and production batches across Sydney.</p></div><div className="flex flex-wrap gap-x-6 gap-y-3 md:justify-end">{[["Services","/services"],["Process","/process"],["Projects","/projects"],["Contact","/contact"]].map(([t,h])=><Link key={h} href={h} className="font-bold hover:text-[var(--brand)]">{t}</Link>)}<Link href="/quote" className="font-bold text-[var(--brand)]">Request a Quote →</Link></div></div><div className="wrap mt-12 flex flex-wrap justify-between gap-4 border-t border-white/20 pt-6 text-xs text-white/50"><p>© {new Date().getFullYear()} FLOWCOAT · Industrial Finishes.</p><div className="flex gap-5"><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></div></div></footer>}
+import { business } from "@/lib/business";
+
+export function SiteFooter() {
+  return (
+    <footer className="bg-[var(--ink)] py-12 text-white">
+      <div className="wrap grid gap-12 md:grid-cols-[1.4fr_1fr]">
+        <div>
+          <BrandLogo inverted />
+          <p className="mt-5 max-w-md text-white/65">Commercial powder coating for metal parts, fabrications and production batches across Sydney.</p>
+          <div className="mt-5 space-y-1 text-sm text-white/65">
+            <p><a href={`tel:${business.phoneHref}`} className="font-bold text-white hover:text-[var(--brand)]">{business.phoneDisplay}</a></p>
+            <address className="not-italic">{business.addressDisplay}</address>
+          </div>
+        </div>
+        <div className="flex flex-wrap gap-x-6 gap-y-3 md:justify-end">
+          {[["Services", "/services"], ["Process", "/process"], ["Projects", "/projects"], ["Contact", "/contact"]].map(([t, h]) => <Link key={h} href={h} className="font-bold hover:text-[var(--brand)]">{t}</Link>)}
+          <Link href="/quote" className="font-bold text-[var(--brand)]">Request a Quote →</Link>
+        </div>
+      </div>
+      <div className="wrap mt-12 flex flex-wrap justify-between gap-4 border-t border-white/20 pt-6 text-xs text-white/50">
+        <p>© {new Date().getFullYear()} FLOWCOAT · Powder Coating.</p>
+        <div className="flex gap-5"><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link></div>
+      </div>
+    </footer>
+  );
+}
