@@ -1,38 +1,48 @@
 # FLOWCOAT production hosting handoff
 
-This is the deployment handoff for the FLOWCOAT website at **flowcoat.com.au**.
+This file is the source-of-truth deployment handoff for **https://flowcoat.com.au**.
 
-## Source
+## 60-second summary
 
-- GitHub repository: `https://github.com/thomasdomegaj-eng/website-flow`
+- Repository: `https://github.com/thomasdomegaj-eng/website-flow`
 - Production branch: `main`
 - Framework: Next.js 14 App Router
-- Runtime: Node.js
-- Styling: Tailwind CSS
-- Recommended Node version: Node 20 LTS
+- Runtime: Node.js 20 LTS (`.nvmrc` included)
+- Package manager: npm
+- Public domain: `https://flowcoat.com.au`
+- Health check after launch: `https://flowcoat.com.au/api/health`
+- Persistent writable project-media directory required for Media Studio uploads
+- Media Studio is password-protected in production
+- Quote submission email backend is being prepared; SMTP values can be supplied later as environment variables without changing hosting architecture
 
-Please deploy from GitHub rather than from a manually copied ZIP so future updates can be pulled/redeployed cleanly.
+Please deploy from GitHub rather than from a copied ZIP so future updates can be pulled/redeployed cleanly.
 
-## Business details currently approved for the site
+## Business details
 
 - Phone: **0447 771 304**
 - Email: **sale@flowcoat.com.au**
 - Factory: **193–195 Power St, Glendenning NSW 2761**
 
-## Standard install/build/run
-
-From a clean checkout:
+## Fastest clean deployment
 
 ```bash
+git clone https://github.com/thomasdomegaj-eng/website-flow.git
+cd website-flow
+nvm use || nvm install 20
 npm install
-npm run typecheck
-npm run build
+npm run verify
 npm start
 ```
 
-The app can sit behind Nginx, Apache, Caddy, a hosting-panel reverse proxy or another HTTPS reverse proxy. The public origin should be `https://flowcoat.com.au` (and optionally redirect `www.flowcoat.com.au` to the preferred canonical host).
+`npm run verify` runs the TypeScript check followed by the production Next.js build.
 
-A typical environment file/config should contain:
+If the host does not use `nvm`, use Node.js 20 LTS directly.
+
+The app may sit behind Nginx, Apache, Caddy, a hosting-panel reverse proxy, Docker ingress, or another HTTPS reverse proxy.
+
+## Production environment variables
+
+Minimum production configuration:
 
 ```dotenv
 NEXT_PUBLIC_SITE_URL=https://flowcoat.com.au
@@ -40,81 +50,141 @@ NEXT_PUBLIC_SITE_URL=https://flowcoat.com.au
 FLOWCOAT_MEDIA_DIR=/absolute/persistent/path/flowcoat-media
 FLOWCOAT_MEDIA_USERNAME=flowcoat
 FLOWCOAT_MEDIA_PASSWORD=<LONG_RANDOM_SECRET_PASSWORD>
+
+FLOWCOAT_NOTIFICATION_EMAIL=sale@flowcoat.com.au
 ```
 
-Do **not** commit the real password to GitHub. Generate a long random password and store it only in the hosting environment/secret manager.
+Do not commit real passwords, SMTP passwords, API keys or other secrets to GitHub. Put them in the host's environment/secret manager.
+
+### Quote-email variables — add when SMTP details are confirmed
+
+The intended quote workflow is server-side submission -> validation/spam controls -> email to `sale@flowcoat.com.au`, with the customer's email used as Reply-To.
+
+The exact variable names will be finalised with the SMTP implementation, but the host should be ready to provide/store:
+
+```dotenv
+SMTP_HOST=
+SMTP_PORT=
+SMTP_SECURE=
+SMTP_USERNAME=
+SMTP_PASSWORD=
+FLOWCOAT_NOTIFICATION_EMAIL=sale@flowcoat.com.au
+```
+
+If the host prefers an email API service instead of SMTP, tell us before final quote-backend wiring and we can use that instead.
 
 ## Media Studio / project photos
 
-FLOWCOAT has a private project-image administration page at:
+Private administration page:
 
 `https://flowcoat.com.au/media-studio`
 
-It is protected by HTTP Basic Authentication in production. The default username is `flowcoat` unless `FLOWCOAT_MEDIA_USERNAME` is changed. The password comes only from `FLOWCOAT_MEDIA_PASSWORD`.
+In production it is protected by HTTP Basic Authentication. Username defaults to `flowcoat` unless `FLOWCOAT_MEDIA_USERNAME` is set. Password is supplied only through `FLOWCOAT_MEDIA_PASSWORD`.
 
-Important storage requirement: `FLOWCOAT_MEDIA_DIR` must point to a **persistent, writable directory outside the application/release directory**. Uploaded project photos are stored under:
+`FLOWCOAT_MEDIA_DIR` must be a **persistent writable directory outside the release/application directory**. Images are stored under:
 
 `$FLOWCOAT_MEDIA_DIR/projects`
 
-That directory must survive code deployments/restarts and should be backed up. The Node process needs read/write permission to it.
+Requirements:
 
-The public Home and Projects galleries read from that media directory and update almost immediately after an authorised upload. The image files themselves are intentionally public once published to the website; only the administration/upload/delete surface is private.
+- Node process has read/write access;
+- directory survives deployments and restarts;
+- directory is included in backups;
+- deployments must never delete it.
+
+The public Home and Projects galleries read from this library and update almost immediately after an authorised upload.
 
 ### Serverless warning
 
-If the intended host uses an ephemeral/serverless filesystem (for example a platform where local files disappear on redeploy/restart), do not rely on filesystem Media Studio storage. Either host the Next.js app on a normal persistent Node server/VPS or move project media to persistent object storage first.
+If the hosting platform uses an ephemeral filesystem, local Media Studio storage is not suitable. Either use a persistent Node/VPS filesystem or tell us so project media can be moved to object storage before production.
 
-## HTTPS is required
+## HTTPS and reverse proxy
 
-Please issue/install a valid TLS certificate and force HTTPS before handing over Media Studio credentials. Basic Authentication must not be used over plain HTTP on the public internet.
+Please:
 
-Recommended redirects:
+- issue/install a valid TLS certificate;
+- force HTTP -> HTTPS;
+- redirect the non-canonical hostname to the chosen canonical host;
+- preserve the original host/protocol headers expected by Next.js;
+- allow sufficiently large request bodies for Media Studio uploads.
 
-- HTTP → HTTPS
-- non-canonical hostname → `https://flowcoat.com.au`
+Media Studio accepts JPG/JPEG, PNG, WebP and AVIF, up to 20 MB per image and up to 25 selected files per upload. The reverse-proxy body limit must therefore not be set too low.
 
-## Reverse proxy / upload considerations
+For extra hardening, rate-limit repeated failed requests to `/media-studio` and non-GET requests to `/api/project-media` if practical.
 
-Media Studio currently accepts JPG, JPEG, PNG, WebP and AVIF images, up to 20 MB per image and up to 25 selected files per upload. Configure the reverse proxy/request-body limit high enough for the intended upload workflow, otherwise the proxy may reject an upload before Next.js sees it.
+## Process manager / uptime
 
-For extra hardening, rate-limit repeated failed requests to `/media-studio` and non-GET requests to `/api/project-media` at the reverse proxy/firewall layer if the hosting stack makes that straightforward.
+Run the production process with the host's normal Node process manager (for example systemd, PM2, Plesk/cPanel Node application manager, Docker restart policy, etc.). It should automatically restart after machine reboot or process failure.
+
+The production start command is:
+
+```bash
+npm start
+```
+
+By default Next.js listens on port 3000 unless the host supplies `PORT`.
+
+## Health check
+
+After starting the app, request:
+
+`GET /api/health`
+
+A healthy response returns JSON with `ok: true`. This endpoint exposes no secrets and can be used by the host's uptime/load-balancer checks.
 
 ## Current application status
 
 Working now:
 
-- public responsive website and main pages;
+- responsive public website and main pages;
 - Home and Projects galleries;
-- protected Media Studio for project-image upload/delete;
-- near-live gallery updates after Media Studio uploads;
-- published phone number, sales email and factory address;
-- SEO metadata and LocalBusiness structured data.
+- password-protected Media Studio for project-image upload/delete;
+- persistent project-media storage when configured correctly;
+- near-live gallery updates;
+- public phone, sales email and factory address;
+- SEO metadata and LocalBusiness structured data;
+- production health-check endpoint.
 
 Not enabled yet:
 
-- quote-form submission to the business;
+- quote-form email submission backend;
 - customer quote-file uploads;
-- Supabase/CRM/Resend integrations.
+- Supabase/CRM integrations.
 
-The quote UI can be viewed, but it intentionally does not pretend to submit until the proper backend is configured.
+The quote UI currently does not fake a successful submission. SMTP/email wiring will be added once mail-server details are supplied.
 
 ## Production verification checklist
 
-After deployment please verify:
+Before launch please verify all of the following:
 
-1. `https://flowcoat.com.au` loads with no console/server errors.
-2. `/services`, `/process`, `/projects`, `/contact` and `/quote` load.
-3. Contact page shows the approved phone, sales email and Glendenning address.
-4. `/media-studio` asks for credentials before displaying the admin interface.
-5. Wrong Media Studio credentials are rejected.
-6. Correct credentials allow an image upload.
-7. The uploaded image appears on `/projects` and the Home page.
-8. The uploaded image is still present after restarting/redeploying the app.
-9. `npm run typecheck` and `npm run build` pass on the deployment source.
+1. `npm run verify` succeeds on the production source.
+2. `https://flowcoat.com.au/api/health` returns `ok: true`.
+3. Home, Services, Process, Projects, Contact and Quote pages load without server errors.
+4. Contact page shows 0447 771 304, sale@flowcoat.com.au and the Glendenning address.
+5. `/media-studio` prompts for credentials.
+6. Incorrect Media Studio credentials fail.
+7. Correct credentials allow an image upload.
+8. Uploaded image appears on Projects and Home.
+9. Uploaded image survives an application restart/redeployment.
 10. HTTPS and canonical-host redirects work.
+11. Media Studio credentials are not present in the Git checkout.
+12. Persistent media storage is included in backups.
 
-## Updating later
+When quote submission is enabled later, also test one real quote from the website through to `sale@flowcoat.com.au` and verify Reply-To points to the customer's email.
 
-For normal website updates, pull/redeploy `main` from the GitHub repository. Do not delete the persistent media directory during deployment. The media library is intentionally separate from the Git checkout so content survives code releases.
+## Future updates
 
-If you need any environment variable or hosting-specific change clarified, please send back the hosting platform/runtime details (for example VPS + Nginx, cPanel Node app, Plesk, Docker, Vercel, etc.) so the deployment instructions can be made exact for that environment.
+Normal release flow should be:
+
+```bash
+git pull origin main
+npm install
+npm run verify
+# restart/reload the Node process using the host's process manager
+```
+
+Never delete `FLOWCOAT_MEDIA_DIR` during deployment.
+
+## If anything is unclear
+
+Please send back the exact hosting stack/platform (for example VPS + Nginx, cPanel Node app, Plesk, Docker, managed Node host, etc.) and we can provide exact platform-specific configuration instead of asking the hosting team to reverse-engineer anything.
