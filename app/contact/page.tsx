@@ -37,6 +37,10 @@ export default function Contact() {
               <dd className="mt-1 text-lg font-semibold"><a href={`mailto:${business.email}`} className="underline decoration-[var(--brand)] decoration-2 underline-offset-4">{business.email}</a></dd>
             </div>
             <div>
+              <dt className="text-xs font-bold uppercase tracking-[.18em] text-[var(--muted)]">Instagram</dt>
+              <dd className="mt-1 text-lg font-semibold"><a href={business.instagramUrl} target="_blank" rel="noreferrer" className="underline decoration-[var(--brand)] decoration-2 underline-offset-4">{business.instagramHandle} ↗</a></dd>
+            </div>
+            <div>
               <dt className="text-xs font-bold uppercase tracking-[.18em] text-[var(--muted)]">Factory</dt>
               <dd className="mt-1 text-lg font-semibold"><address className="not-italic">{business.addressDisplay}</address></dd>
             </div>
