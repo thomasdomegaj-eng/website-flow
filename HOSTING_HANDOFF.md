@@ -1,29 +1,21 @@
-# FLOWCOAT production hosting handoff
+# FLOWCOAT private-launch hosting handoff
 
-This file is the source-of-truth deployment handoff for **https://flowcoat.com.au**.
+Source of truth for deploying `https://flowcoat.com.au`.
 
-## 60-second summary
+## Application
 
 - Repository: `https://github.com/thomasdomegaj-eng/website-flow`
-- Production branch: `main`
-- Framework: Next.js 14 App Router
-- Runtime: Node.js 20 LTS (`.nvmrc` included)
+- Branch: `main`
+- Next.js 14 App Router
+- Node.js 20 LTS
 - Package manager: npm
-- Public domain: `https://flowcoat.com.au`
-- Health check after launch: `https://flowcoat.com.au/api/health`
-- Persistent writable project-media directory required for Media Studio uploads
-- Media Studio is password-protected in production
-- Quote submission email backend is being prepared; SMTP values can be supplied later as environment variables without changing hosting architecture
+- Health check: `GET /api/health`
+- Quote endpoint: `POST /api/quote`
+- Private content manager: `/media-studio`
 
-Please deploy from GitHub rather than from a copied ZIP so future updates can be pulled/redeployed cleanly.
+Please deploy from GitHub rather than a copied ZIP.
 
-## Business details
-
-- Phone: **0447 771 304**
-- Email: **sale@flowcoat.com.au**
-- Factory: **193–195 Power St, Glendenning NSW 2761**
-
-## Fastest clean deployment
+## Build and run
 
 ```bash
 git clone https://github.com/thomasdomegaj-eng/website-flow.git
@@ -34,147 +26,77 @@ npm run verify
 npm start
 ```
 
-`npm run verify` runs the TypeScript check followed by the production Next.js build.
+If `nvm` is not used, run Node.js 20 LTS directly. Keep the Node process alive with the platform's normal process manager.
 
-If the host does not use `nvm`, use Node.js 20 LTS directly.
-
-The app may sit behind Nginx, Apache, Caddy, a hosting-panel reverse proxy, Docker ingress, or another HTTPS reverse proxy.
-
-## Production environment variables
-
-Minimum production configuration:
+## Required server environment
 
 ```dotenv
 NEXT_PUBLIC_SITE_URL=https://flowcoat.com.au
 
 FLOWCOAT_MEDIA_DIR=/absolute/persistent/path/flowcoat-media
 FLOWCOAT_MEDIA_USERNAME=flowcoat
-FLOWCOAT_MEDIA_PASSWORD=<LONG_RANDOM_SECRET_PASSWORD>
+FLOWCOAT_MEDIA_PASSWORD=<PRIVATE_MEDIA_STUDIO_PASSWORD>
 
+SMTP_HOST=mail-au.smtp2go.com
+SMTP_PORT=2525
+SMTP_SECURE=false
+SMTP_USERNAME=noreply@flowcoat.com.au
+SMTP_PASSWORD=<PRIVATE_SMTP_PASSWORD>
+FLOWCOAT_FROM_EMAIL=noreply@flowcoat.com.au
 FLOWCOAT_NOTIFICATION_EMAIL=sale@flowcoat.com.au
 ```
 
-Do not commit real passwords, SMTP passwords, API keys or other secrets to GitHub. Put them in the host's environment/secret manager.
+`SMTP_SECURE=false` is intentional on port 2525: the app requires STARTTLS. Store both passwords only in the hosting environment/secret manager. Never commit them to GitHub and never expose them through `NEXT_PUBLIC_` variables.
 
-### Quote-email variables — add when SMTP details are confirmed
+For the initial private test, use the SMTP password already supplied by the email team. It can be rotated before public launch without any code change.
 
-The intended quote workflow is server-side submission -> validation/spam controls -> email to `sale@flowcoat.com.au`, with the customer's email used as Reply-To.
+## Quote workflow
 
-The exact variable names will be finalised with the SMTP implementation, but the host should be ready to provide/store:
+When the SMTP environment is configured, the Request a Quote form:
 
-```dotenv
-SMTP_HOST=
-SMTP_PORT=
-SMTP_SECURE=
-SMTP_USERNAME=
-SMTP_PASSWORD=
-FLOWCOAT_NOTIFICATION_EMAIL=sale@flowcoat.com.au
-```
+- validates required fields server-side;
+- applies a honeypot and basic rate limiting;
+- creates an `FC-...` reference;
+- sends from `noreply@flowcoat.com.au` to `sale@flowcoat.com.au`;
+- sets the customer's supplied email as Reply-To;
+- shows success only after delivery succeeds;
+- clears the local browser draft only after success.
 
-If the host prefers an email API service instead of SMTP, tell us before final quote-backend wiring and we can use that instead.
+If delivery fails, the customer sees an error and the draft remains on their device.
 
-## Media Studio / project photos
+## Media Studio
 
-Private administration page:
+Private URL: `https://flowcoat.com.au/media-studio`
 
-`https://flowcoat.com.au/media-studio`
+Production access is HTTP Basic Auth using `FLOWCOAT_MEDIA_USERNAME` and `FLOWCOAT_MEDIA_PASSWORD`.
 
-In production it is protected by HTTP Basic Authentication. Username defaults to `flowcoat` unless `FLOWCOAT_MEDIA_USERNAME` is set. Password is supplied only through `FLOWCOAT_MEDIA_PASSWORD`.
+`FLOWCOAT_MEDIA_DIR` must be a persistent writable directory outside the deployment/release directory. It must survive restarts and redeployments and should be backed up. The Node process needs read/write access.
 
-`FLOWCOAT_MEDIA_DIR` must be a **persistent writable directory outside the release/application directory**. Images are stored under:
+Media Studio manages approved public project photos and approved client/company logos. Customer quote attachments must not be placed there.
 
-`$FLOWCOAT_MEDIA_DIR/projects`
+## HTTPS / reverse proxy
 
-Requirements:
+Please install a valid TLS certificate, force HTTP to HTTPS, redirect the non-canonical hostname to `https://flowcoat.com.au`, preserve forwarded host/protocol headers, and allow request bodies large enough for Media Studio uploads. The app accepts images up to 20 MB each and up to 25 files per batch.
 
-- Node process has read/write access;
-- directory survives deployments and restarts;
-- directory is included in backups;
-- deployments must never delete it.
+## Private-launch verification
 
-The public Home and Projects galleries read from this library and update almost immediately after an authorised upload.
+Before handing the test deployment back, please verify:
 
-### Serverless warning
-
-If the hosting platform uses an ephemeral filesystem, local Media Studio storage is not suitable. Either use a persistent Node/VPS filesystem or tell us so project media can be moved to object storage before production.
-
-## HTTPS and reverse proxy
-
-Please:
-
-- issue/install a valid TLS certificate;
-- force HTTP -> HTTPS;
-- redirect the non-canonical hostname to the chosen canonical host;
-- preserve the original host/protocol headers expected by Next.js;
-- allow sufficiently large request bodies for Media Studio uploads.
-
-Media Studio accepts JPG/JPEG, PNG, WebP and AVIF, up to 20 MB per image and up to 25 selected files per upload. The reverse-proxy body limit must therefore not be set too low.
-
-For extra hardening, rate-limit repeated failed requests to `/media-studio` and non-GET requests to `/api/project-media` if practical.
-
-## Process manager / uptime
-
-Run the production process with the host's normal Node process manager (for example systemd, PM2, Plesk/cPanel Node application manager, Docker restart policy, etc.). It should automatically restart after machine reboot or process failure.
-
-The production start command is:
-
-```bash
-npm start
-```
-
-By default Next.js listens on port 3000 unless the host supplies `PORT`.
-
-## Health check
-
-After starting the app, request:
-
-`GET /api/health`
-
-A healthy response returns JSON with `ok: true`. This endpoint exposes no secrets and can be used by the host's uptime/load-balancer checks.
-
-## Current application status
-
-Working now:
-
-- responsive public website and main pages;
-- Home and Projects galleries;
-- password-protected Media Studio for project-image upload/delete;
-- persistent project-media storage when configured correctly;
-- near-live gallery updates;
-- public phone, sales email and factory address;
-- SEO metadata and LocalBusiness structured data;
-- production health-check endpoint.
-
-Not enabled yet:
-
-- quote-form email submission backend;
-- customer quote-file uploads;
-- Supabase/CRM integrations.
-
-The quote UI currently does not fake a successful submission. SMTP/email wiring will be added once mail-server details are supplied.
-
-## Production verification checklist
-
-Before launch please verify all of the following:
-
-1. `npm run verify` succeeds on the production source.
-2. `https://flowcoat.com.au/api/health` returns `ok: true`.
-3. Home, Services, Process, Projects, Contact and Quote pages load without server errors.
-4. Contact page shows 0447 771 304, sale@flowcoat.com.au and the Glendenning address.
-5. `/media-studio` prompts for credentials.
-6. Incorrect Media Studio credentials fail.
-7. Correct credentials allow an image upload.
-8. Uploaded image appears on Projects and Home.
-9. Uploaded image survives an application restart/redeployment.
-10. HTTPS and canonical-host redirects work.
-11. Media Studio credentials are not present in the Git checkout.
-12. Persistent media storage is included in backups.
-
-When quote submission is enabled later, also test one real quote from the website through to `sale@flowcoat.com.au` and verify Reply-To points to the customer's email.
+1. `npm install` completes.
+2. `npm run verify` succeeds.
+3. `GET /api/health` returns `ok: true`.
+4. Main public pages load without errors.
+5. `/media-studio` prompts for credentials and rejects incorrect credentials.
+6. Correct Media Studio credentials allow a project image and client-logo upload.
+7. Uploaded media survives an application restart.
+8. One real quote submitted through the website arrives at `sale@flowcoat.com.au`.
+9. The message is sent from `noreply@flowcoat.com.au`.
+10. Reply addresses the customer's submitted email.
+11. The `FC-...` reference on the success screen matches the email.
+12. HTTPS and canonical-host redirects work.
+13. Neither password exists in the Git checkout or page source.
 
 ## Future updates
-
-Normal release flow should be:
 
 ```bash
 git pull origin main
@@ -185,6 +107,4 @@ npm run verify
 
 Never delete `FLOWCOAT_MEDIA_DIR` during deployment.
 
-## If anything is unclear
-
-Please send back the exact hosting stack/platform (for example VPS + Nginx, cPanel Node app, Plesk, Docker, managed Node host, etc.) and we can provide exact platform-specific configuration instead of asking the hosting team to reverse-engineer anything.
+If anything differs from these assumptions, please send the exact hosting stack (cPanel/Plesk Node app, VPS + Nginx, Docker, managed Node host, etc.) and any relevant error output so platform-specific settings can be provided.
