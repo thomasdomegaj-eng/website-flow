@@ -26,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     name: business.name,
     description: "Commercial powder coating for metal parts, fabrications and production batches.",
     telephone: business.phoneHref,
+    email: business.email,
     address: {
       "@type": "PostalAddress",
       ...business.address,
