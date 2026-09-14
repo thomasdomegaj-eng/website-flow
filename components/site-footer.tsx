@@ -12,6 +12,7 @@ export function SiteFooter() {
           <div className="mt-5 space-y-1 text-sm text-white/65">
             <p><a href={`tel:${business.phoneHref}`} className="font-bold text-white hover:text-[var(--brand)]">{business.phoneDisplay}</a></p>
             <p><a href={`mailto:${business.email}`} className="font-bold text-white hover:text-[var(--brand)]">{business.email}</a></p>
+            <p><a href={business.instagramUrl} target="_blank" rel="noreferrer" className="font-bold text-white hover:text-[var(--brand)]">Instagram {business.instagramHandle} ↗</a></p>
             <address className="not-italic">{business.addressDisplay}</address>
           </div>
         </div>
