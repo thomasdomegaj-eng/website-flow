@@ -1,45 +1,41 @@
 # Ready-to-send message for the website hosting team
 
-**Subject: FLOWCOAT website deployment – GitHub source and hosting handoff**
+**Subject: FLOWCOAT website – private server launch and test setup**
 
 Hi,
 
-The FLOWCOAT website is ready for production hosting on **flowcoat.com.au**.
+We are ready to do a private test deployment of the FLOWCOAT website on your servers before making it public.
 
-The production source is here:
-
+Source:
 `https://github.com/thomasdomegaj-eng/website-flow`
 
-Please deploy the **main** branch.
+Please deploy the **main** branch using **Node.js 20 LTS**.
 
-A complete deployment handoff is included in the repository here:
-
+Full technical handoff:
 `https://github.com/thomasdomegaj-eng/website-flow/blob/main/HOSTING_HANDOFF.md`
 
-The short version is:
+Basic deployment:
 
-- Next.js 14 / Node.js 20 LTS
-- install: `npm install`
-- production verification: `npm run verify`
-- run: `npm start`
-- public URL: `https://flowcoat.com.au`
-- health check: `https://flowcoat.com.au/api/health`
-- the private `/media-studio` page requires server-side credentials
-- project-image uploads require a persistent writable directory outside the application release directory
-- HTTPS should be forced before Media Studio credentials are used
+```bash
+npm install
+npm run verify
+npm start
+```
 
-Please set the production environment variables described in `HOSTING_HANDOFF.md`. In particular, the Media Studio password must be stored privately on the server and must not be committed to GitHub.
+Please configure the server-side environment values in `HOSTING_HANDOFF.md`. The site now needs the Media Studio credentials plus the SMTP settings for `noreply@flowcoat.com.au`. Please use the SMTP password Shehpar already supplied to me in the email thread. Keep all passwords only in the hosting environment/secret manager — not in GitHub or public configuration files.
 
-Current business details already published in the website are:
+The Request a Quote form is wired so successful submissions are sent to `sale@flowcoat.com.au` from `noreply@flowcoat.com.au`, with the customer's email used as Reply-To. `/media-studio` is password protected and manages project photos/client logos using persistent writable storage.
 
-- Phone: 0447 771 304
-- Email: sale@flowcoat.com.au
-- Address: 193–195 Power St, Glendenning NSW 2761
+For this first deployment, could you please keep the **entire website private while we test it**, preferably using temporary site-wide HTTP Basic Auth or the equivalent hosting-panel password protection. Please also prevent indexing on the private test deployment. Once it is running, send me the test URL and temporary access details securely.
 
-The Request a Quote frontend is already built. We are separately obtaining SMTP details so the final backend can email submitted enquiries directly to `sale@flowcoat.com.au`. Once those mail details are confirmed, the SMTP secrets can be added as server environment variables without changing the basic hosting setup.
+Please work through the verification checklist in `HOSTING_HANDOFF.md`, especially:
+- `npm run verify`
+- `/api/health`
+- Media Studio login/upload/persistence
+- one real quote submission through to `sale@flowcoat.com.au`
+- Reply-To going back to the customer's address
+- HTTPS and redirects
 
-Could you please let us know what hosting stack you are using (for example cPanel/Plesk Node app, VPS + Nginx, Docker, managed Node hosting, etc.)? If there are any platform-specific requirements, we can prepare exact settings for your environment.
-
-Once deployed, please work through the production verification checklist in `HOSTING_HANDOFF.md`, particularly the Media Studio persistence test.
+If you can also tell me the hosting stack you are using (cPanel, Plesk, VPS/Nginx, Docker, etc.), that will help if any platform-specific configuration is needed.
 
 Thanks.

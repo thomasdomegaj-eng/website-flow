@@ -12,6 +12,12 @@ npm run dev
 
 Open `http://localhost:3000`. Set `NEXT_PUBLIC_SITE_URL` to the production HTTPS origin.
 
+## Quote submission
+
+The Request a Quote form submits to the server-side `/api/quote` endpoint. The server validates the required fields, applies a honeypot and basic rate limiting, creates an `FC-...` reference, and sends the enquiry through the configured SMTP account to `sale@flowcoat.com.au`. The customer's email is set as Reply-To. SMTP credentials are server-only environment variables and must never be committed to GitHub.
+
+If delivery fails, the form shows an error and keeps the customer's locally saved draft. The draft is cleared only after a successful send.
+
 ## Media Studio
 
 Approved public project photography and approved client/company logos can be managed at `/media-studio`.
@@ -51,4 +57,4 @@ The app requires a normal Node.js/Next.js runtime. A persistent-filesystem host 
 
 ## Important launch status
 
-The supplied FLOWCOAT master artwork is now wired into the site. Approved public phone, sales email, factory address and Instagram are published. Quote drafts save in the customer's browser, while real quote submission remains disabled until the SMTP-backed server endpoint, validation and spam controls are configured. Customer quote-file upload can remain a post-launch feature. See `PROJECT_SPEC.md` for the remaining launch work.
+The supplied FLOWCOAT master artwork, public phone, sales email, factory address and Instagram are published. The quote-email backend is implemented and becomes active when the SMTP environment variables in `.env.example` are configured on the server. Media Studio is ready for production once persistent storage and its password are configured. Customer quote-file upload can remain a post-launch feature. See `PROJECT_SPEC.md` for remaining launch checks.
