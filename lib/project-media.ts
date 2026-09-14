@@ -15,7 +15,8 @@ export type ProjectMediaItem = {
 };
 
 export function localMediaStudioEnabled() {
-  return process.env.NODE_ENV !== "production";
+  if (process.env.NODE_ENV !== "production") return true;
+  return Boolean(process.env.FLOWCOAT_MEDIA_DIR?.trim());
 }
 
 export function localProjectMediaDirectory() {
