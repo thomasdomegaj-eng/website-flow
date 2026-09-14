@@ -16,8 +16,8 @@ Please deploy from GitHub rather than from a manually copied ZIP so future updat
 ## Business details currently approved for the site
 
 - Phone: **0447 771 304**
+- Email: **sale@flowcoat.com.au**
 - Factory: **193–195 Power St, Glendenning NSW 2761**
-- Public email: **not confirmed yet**
 
 ## Standard install/build/run
 
@@ -87,14 +87,13 @@ Working now:
 - Home and Projects galleries;
 - protected Media Studio for project-image upload/delete;
 - near-live gallery updates after Media Studio uploads;
-- published phone number and factory address;
+- published phone number, sales email and factory address;
 - SEO metadata and LocalBusiness structured data.
 
 Not enabled yet:
 
 - quote-form submission to the business;
 - customer quote-file uploads;
-- public email address;
 - Supabase/CRM/Resend integrations.
 
 The quote UI can be viewed, but it intentionally does not pretend to submit until the proper backend is configured.
@@ -105,7 +104,7 @@ After deployment please verify:
 
 1. `https://flowcoat.com.au` loads with no console/server errors.
 2. `/services`, `/process`, `/projects`, `/contact` and `/quote` load.
-3. Contact page shows the approved phone and Glendenning address.
+3. Contact page shows the approved phone, sales email and Glendenning address.
 4. `/media-studio` asks for credentials before displaying the admin interface.
 5. Wrong Media Studio credentials are rejected.
 6. Correct credentials allow an image upload.

@@ -11,6 +11,7 @@ export function SiteFooter() {
           <p className="mt-5 max-w-md text-white/65">Commercial powder coating for metal parts, fabrications and production batches across Sydney.</p>
           <div className="mt-5 space-y-1 text-sm text-white/65">
             <p><a href={`tel:${business.phoneHref}`} className="font-bold text-white hover:text-[var(--brand)]">{business.phoneDisplay}</a></p>
+            <p><a href={`mailto:${business.email}`} className="font-bold text-white hover:text-[var(--brand)]">{business.email}</a></p>
             <address className="not-italic">{business.addressDisplay}</address>
           </div>
         </div>
