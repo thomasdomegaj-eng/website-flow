@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
@@ -45,7 +46,7 @@ async function imageNames(directory: string) {
 
 export async function listProjectMedia(limit?: number): Promise<ProjectMediaItem[]> {
   const [local, bundled] = await Promise.all([
-    imageNames(localProjectMediaDirectory()),
+    localMediaStudioEnabled() ? imageNames(localProjectMediaDirectory()) : Promise.resolve([]),
     imageNames(bundledProjectMediaDirectory()),
   ]);
 
@@ -96,7 +97,7 @@ export async function saveProjectMedia(file: File) {
   await fs.mkdir(directory, { recursive: true });
 
   const { stem, extension } = safeBaseName(file.name);
-  const name = `${Date.now()}-${stem}${extension}`;
+  const name = `${Date.now()}-${randomUUID().slice(0, 8)}-${stem}${extension}`;
   const destination = path.join(directory, name);
   const bytes = Buffer.from(await file.arrayBuffer());
   await fs.writeFile(destination, bytes, { flag: "wx" });
@@ -114,6 +115,7 @@ export async function deleteProjectMedia(name: string) {
 }
 
 export async function readProjectMedia(name: string) {
+  if (!localMediaStudioEnabled()) return null;
   if (path.basename(name) !== name || !hasSupportedExtension(name)) return null;
 
   try {

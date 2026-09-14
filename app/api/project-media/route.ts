@@ -19,7 +19,7 @@ export async function POST(request: Request) {
   if (!localMediaStudioEnabled()) return NextResponse.json({ error: "Not found." }, { status: 404 });
 
   const formData = await request.formData();
-  const files = formData.getAll("files").filter((value): value is File => value instanceof File);
+  const files = formData.getAll("files").filter((value): value is File => typeof value !== "string");
   const validationError = validateProjectMediaFiles(files);
   if (validationError) return NextResponse.json({ error: validationError }, { status: 400 });
 

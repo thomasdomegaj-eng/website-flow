@@ -33,6 +33,7 @@ export function MediaStudio() {
     event.preventDefault();
     if (!files.length || busy) return;
 
+    const form = event.currentTarget;
     setBusy(true);
     setMessage(`Uploading ${files.length} image${files.length === 1 ? "" : "s"}…`);
     const body = new FormData();
@@ -46,7 +47,7 @@ export function MediaStudio() {
       setFiles([]);
       setMessage("Uploaded. The website gallery has been notified and should update almost immediately.");
       announceChange();
-      event.currentTarget.reset();
+      form.reset();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Upload failed.");
     } finally {
@@ -100,7 +101,7 @@ export function MediaStudio() {
 
         <div>
           <div className="mb-5 flex items-end justify-between gap-4"><div><p className="eyebrow text-white/45">Current gallery</p><h2 className="mt-2 text-2xl font-bold">{items.length} image{items.length === 1 ? "" : "s"}</h2></div><button type="button" onClick={() => void refresh()} className="text-sm font-bold underline underline-offset-4">Refresh</button></div>
-          {items.length === 0 ? <div className="border border-dashed border-white/20 p-10 text-center text-white/50">No project images yet.</div> : <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{items.map((item) => <article key={`${item.source}:${item.name}`} className="overflow-hidden border border-white/10 bg-white/[.04]"><div className="relative aspect-[4/3] bg-black/30"><Image src={item.url} alt="" fill unoptimized={item.source === "local"} sizes="(max-width: 640px) 100vw, 33vw" className="object-cover"/></div><div className="flex items-center justify-between gap-3 p-3"><div className="min-w-0"><p className="truncate text-xs font-bold">{item.name.replace(/^\d+-/, "")}</p><p className="mt-1 text-[.65rem] uppercase tracking-[.16em] text-white/35">{item.source === "local" ? "Local upload" : "Repository asset"}</p></div>{item.source === "local" && <button type="button" disabled={busy} onClick={() => void remove(item)} className="shrink-0 text-xs font-bold text-[var(--brand)] disabled:opacity-40">Delete</button>}</div></article>)}</div>}
+          {items.length === 0 ? <div className="border border-dashed border-white/20 p-10 text-center text-white/50">No project images yet.</div> : <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">{items.map((item) => <article key={`${item.source}:${item.name}`} className="overflow-hidden border border-white/10 bg-white/[.04]"><div className="relative aspect-[4/3] bg-black/30"><Image src={item.url} alt="" fill unoptimized={item.source === "local"} sizes="(max-width: 640px) 100vw, 33vw" className="object-cover"/></div><div className="flex items-center justify-between gap-3 p-3"><div className="min-w-0"><p className="truncate text-xs font-bold">{item.name.replace(/^\d+-[a-f0-9]+-/, "")}</p><p className="mt-1 text-[.65rem] uppercase tracking-[.16em] text-white/35">{item.source === "local" ? "Local upload" : "Repository asset"}</p></div>{item.source === "local" && <button type="button" disabled={busy} onClick={() => void remove(item)} className="shrink-0 text-xs font-bold text-[var(--brand)] disabled:opacity-40">Delete</button>}</div></article>)}</div>}
         </div>
       </section>
     </div>
