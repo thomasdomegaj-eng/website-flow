@@ -77,6 +77,8 @@ Recommended redirects:
 
 Media Studio currently accepts JPG, JPEG, PNG, WebP and AVIF images, up to 20 MB per image and up to 25 selected files per upload. Configure the reverse proxy/request-body limit high enough for the intended upload workflow, otherwise the proxy may reject an upload before Next.js sees it.
 
+For extra hardening, rate-limit repeated failed requests to `/media-studio` and non-GET requests to `/api/project-media` at the reverse proxy/firewall layer if the hosting stack makes that straightforward.
+
 ## Current application status
 
 Working now:
