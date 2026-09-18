@@ -84,7 +84,7 @@ export function MediaStudio() {
     setMessage(`Removing ${item.name}…`);
     try {
       const response = await fetch("/api/project-media", {
-        method: "DELETE",
+        method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: item.name, collection }),
       });
