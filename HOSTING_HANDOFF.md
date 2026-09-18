@@ -5,7 +5,7 @@ Source of truth for deploying `https://flowcoat.com.au`.
 ## Application
 
 - Repository: `https://github.com/thomasdomegaj-eng/website-flow`
-- Branch: `main`
+- Branch: `deploy/windows-plesk`
 - Next.js 14 App Router
 - Node.js 20 LTS
 - Package manager: npm
@@ -110,7 +110,7 @@ Windows Plesk runs Node.js through IIS/iisnode. If startup fails, the relevant N
 
 ## Compatibility note
 
-Plesk does not currently advertise native Next.js support. This repository therefore uses a standard Next.js custom Node server (`app.js`) as a Windows-Plesk compatibility layer. It keeps the existing Next.js pages, API routes, SMTP quote backend and Media Studio functionality intact, but this deployment path still needs to be proven on the actual server.
+Plesk does not currently advertise native Next.js support. This branch uses a standard Next.js custom Node server (`app.js`) as a Windows-Plesk compatibility layer. The deployment has been proven on the live FLOWCOAT Windows Plesk/iisnode host. IIS on this host rejects the HTTP DELETE verb, so Media Studio deletion intentionally uses an authenticated JSON POST request instead.
 
 If the Windows Plesk/iisnode environment cannot run the custom server reliably, the fallback is a normal Node/Linux VPS or another host that supports running `next start`/Node applications directly. A static export is not suitable because FLOWCOAT needs server API routes, SMTP submission and Media Studio writes.
 
@@ -136,7 +136,7 @@ Before handing the test deployment back, please verify:
 ## Future updates
 
 ```text
-git pull origin main
+git pull origin deploy/windows-plesk
 npm install
 npm run verify
 ```
@@ -146,3 +146,13 @@ Then restart the Node.js application in Plesk.
 Never delete `FLOWCOAT_MEDIA_DIR` during deployment.
 
 If anything differs from these assumptions, please send the exact Plesk/Node/iisnode error output and we can adjust the compatibility setup.
+
+
+## Confirmed live Windows/Plesk notes
+
+- Build from the lowercase application path: `C:\inetpub\vhosts\flowcoat.com.au\httpdocs`. Mixing `C:\Inetpub` and `C:\inetpub` caused duplicate React module/casing failures during Next.js prerendering.
+- Rebuild with `npm run build`, then recycle iisnode by touching `app.js`.
+- The live Windows host uses the PNG master logo asset because the original WebP/Next Image path was unreliable under this IIS configuration.
+- Media Studio deletion uses POST rather than the DELETE HTTP verb because IIS blocked DELETE before it reached Next.js.
+- `.env.production.local` stays server-only. Never commit SMTP credentials or Media Studio credentials.
+- `web.config` in this branch is the Windows Plesk/iisnode production routing configuration.
